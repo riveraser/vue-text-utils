@@ -1,5 +1,5 @@
 {
-  "name": "@sergiorivera/vue-text-utils",
+  "name": "@riveraser/vue-text-utils",
   "version": "1.0.0",
   "description": "A lightweight Vue 3 plugin offering a collection of custom directives for formatting text directly in your templates.",
   "main": "dist/index.umd.js",
