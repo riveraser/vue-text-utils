@@ -1,9 +1,7 @@
 import type { Directive, DirectiveBinding } from "vue";
 import type { CurrencyFormatOptions } from "../types";
 
-/**
- * Currency formatting directive
- */
+// Currency formatting directive
 const CurrencyDirective: Directive = {
   mounted(el, binding) {
     formatCurrency(el, binding);

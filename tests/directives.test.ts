@@ -1,24 +1,44 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-
+import CurrencyDirective from "../src/directives/currency";
+import NumberDirective from "../src/directives/number";
+import DateTimeDirective from "../src/directives/datetime";
 describe("Currency Directive", () => {
   it("should format currency correctly", async () => {
-    const wrapper = mount({
-      template: '<p v-currency="120">120</p>',
-    });
+    const wrapper = mount(
+      {
+        template: '<p v-currency="120">120</p>',
+      },
+      {
+        global: {
+          directives: {
+            currency: CurrencyDirective,
+          },
+        },
+      },
+    );
 
     await wrapper.vm.$nextTick();
     const element = wrapper.element as HTMLElement;
 
     // Should contain currency symbol and formatted number
-    expect(element.textContent).toMatch(/[£€¥$]/);
+    expect(element.textContent).toMatch(/[\$£€¥]/);
     expect(element.textContent).toMatch(/120/);
   });
 
   it("should work with directive argument for currency type", async () => {
-    const wrapper = mount({
-      template: '<p v-currency.eur="120">120</p>',
-    });
+    const wrapper = mount(
+      {
+        template: '<p v-currency:EUR="120">120</p>',
+      },
+      {
+        global: {
+          directives: {
+            currency: CurrencyDirective,
+          },
+        },
+      },
+    );
 
     await wrapper.vm.$nextTick();
     const element = wrapper.element as HTMLElement;
@@ -29,10 +49,23 @@ describe("Currency Directive", () => {
   });
 
   it("should handle binding options", async () => {
-    const wrapper = mount({
-      template:
-        '<p v-currency="{ currency: "USD", currencyDisplay: "code" }">120</p>',
-    });
+    const wrapper = mount(
+      {
+        template: '<p v-currency="options">120</p>',
+        data() {
+          return {
+            options: { currency: "USD", currencyDisplay: "code" },
+          };
+        },
+      },
+      {
+        global: {
+          directives: {
+            currency: CurrencyDirective,
+          },
+        },
+      },
+    );
 
     await wrapper.vm.$nextTick();
     const element = wrapper.element as HTMLElement;
@@ -45,9 +78,18 @@ describe("Currency Directive", () => {
 
 describe("Number Directive", () => {
   it("should format numbers with grouping", async () => {
-    const wrapper = mount({
-      template: '<p v-number="1200">1200</p>',
-    });
+    const wrapper = mount(
+      {
+        template: '<p v-number="1200">1200</p>',
+      },
+      {
+        global: {
+          directives: {
+            number: NumberDirective,
+          },
+        },
+      },
+    );
 
     await wrapper.vm.$nextTick();
     const element = wrapper.element as HTMLElement;
@@ -57,9 +99,23 @@ describe("Number Directive", () => {
   });
 
   it("should format percentage correctly", async () => {
-    const wrapper = mount({
-      template: '<p v-number="{ percentage: true }">0.25</p>',
-    });
+    const wrapper = mount(
+      {
+        template: '<p v-number="options">0.25</p>',
+        data() {
+          return {
+            options: { percentage: true },
+          };
+        },
+      },
+      {
+        global: {
+          directives: {
+            number: NumberDirective,
+          },
+        },
+      },
+    );
 
     await wrapper.vm.$nextTick();
     const element = wrapper.element as HTMLElement;
@@ -73,9 +129,23 @@ describe("Number Directive", () => {
 describe("DateTime Directive", () => {
   it("should format dates correctly", async () => {
     const testDate = new Date("2025-11-01T20:25:20.000Z");
-    const wrapper = mount({
-      template: `<p v-date-time="${testDate.toISOString()}">2025-11-01T20:25:20.000Z</p>`,
-    });
+    const wrapper = mount(
+      {
+        template: '<p v-date-time="testDate">2025-11-01T20:25:20.000Z</p>',
+        data() {
+          return {
+            testDate: testDate.toISOString(),
+          };
+        },
+      },
+      {
+        global: {
+          directives: {
+            "date-time": DateTimeDirective,
+          },
+        },
+      },
+    );
 
     await wrapper.vm.$nextTick();
     const element = wrapper.element as HTMLElement;
@@ -87,9 +157,23 @@ describe("DateTime Directive", () => {
 
   it("should handle different date styles", async () => {
     const testDate = new Date("2025-11-01T20:25:20.000Z");
-    const wrapper = mount({
-      template: `<p v-date-time="{ dateStyle: 'short', timeStyle: 'short' }">${testDate.toISOString()}</p>`,
-    });
+    const wrapper = mount(
+      {
+        template: '<p v-date-time="options">2025-11-01T20:25:20.000Z</p>',
+        data() {
+          return {
+            options: { dateStyle: "short", timeStyle: "short" },
+          };
+        },
+      },
+      {
+        global: {
+          directives: {
+            "date-time": DateTimeDirective,
+          },
+        },
+      },
+    );
 
     await wrapper.vm.$nextTick();
     const element = wrapper.element as HTMLElement;

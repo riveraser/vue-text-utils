@@ -16,19 +16,37 @@ const NumberDirective: Directive = {
 function formatNumber(el: HTMLElement, binding: DirectiveBinding) {
   const { value } = binding;
 
-  // Get options from binding
-  const options: NumberFormatOptions = {
-    minimumFractionDigits: undefined,
-    maximumFractionDigits: undefined,
-    useGrouping: true,
-    percentage: false,
-    accessibility: true,
-    locale: (binding.instance as any)?.$i18n?.locale || "en-US",
-    ...binding.value,
-  };
+  // Determine if value is options object or the actual value
+  let numericValue: number;
+  let options: NumberFormatOptions;
+
+  if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+    // Value is options object, get numeric value from element text or data attribute
+    const elementText = el.textContent || el.getAttribute("data-value") || "0";
+    numericValue = parseFloat(elementText);
+    options = {
+      minimumFractionDigits: undefined,
+      maximumFractionDigits: undefined,
+      useGrouping: true,
+      percentage: false,
+      accessibility: true,
+      locale: (binding.instance as any)?.$i18n?.locale || "en-US",
+      ...value,
+    };
+  } else {
+    // Value is the numeric value
+    numericValue = parseFloat(String(value));
+    options = {
+      minimumFractionDigits: undefined,
+      maximumFractionDigits: undefined,
+      useGrouping: true,
+      percentage: false,
+      accessibility: true,
+      locale: (binding.instance as any)?.$i18n?.locale || "en-US",
+    };
+  }
 
   // Parse the input value
-  const numericValue = parseFloat(value);
   if (isNaN(numericValue)) {
     console.warn("Number directive: Invalid numeric value:", value);
     return;

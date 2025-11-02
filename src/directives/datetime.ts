@@ -16,21 +16,44 @@ const DateTimeDirective: Directive = {
 function formatDateTime(el: HTMLElement, binding: DirectiveBinding) {
   const { value } = binding;
 
-  // Get options from binding
-  const options: DateTimeFormatOptions = {
-    dateStyle: "medium",
-    timeStyle: "none",
-    timeZone: "UTC",
-    accessibility: true,
-    locale: (binding.instance as any)?.$i18n?.locale || "en-US",
-    inputFormat: "auto",
-    ...binding.value,
-  };
+  // Determine if value is options object or the actual date value
+  let inputValue: any;
+  let options: DateTimeFormatOptions;
+
+  if (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    !(value instanceof Date)
+  ) {
+    // Value is options object, get date value from element text or data attribute
+    const elementText = el.textContent || el.getAttribute("data-value") || "";
+    inputValue = elementText;
+    options = {
+      dateStyle: "medium",
+      timeStyle: "none",
+      timeZone: "UTC",
+      accessibility: true,
+      locale: (binding.instance as any)?.$i18n?.locale || "en-US",
+      inputFormat: "auto",
+      ...value,
+    };
+  } else {
+    // Value is the date value
+    inputValue = value;
+    options = {
+      dateStyle: "medium",
+      timeStyle: "none",
+      timeZone: "UTC",
+      accessibility: true,
+      locale: (binding.instance as any)?.$i18n?.locale || "en-US",
+      inputFormat: "auto",
+    };
+  }
 
   try {
     // Parse the input date
     let date: Date;
-    const inputValue = value;
 
     if (inputValue instanceof Date) {
       date = inputValue;
