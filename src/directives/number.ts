@@ -1,5 +1,6 @@
 import type { Directive, DirectiveBinding } from "vue";
 import type { NumberFormatOptions } from "../types";
+import { getGlobalOptions } from "../index";
 
 /**
  * Number formatting directive
@@ -15,10 +16,15 @@ const NumberDirective: Directive = {
 
 function formatNumber(el: HTMLElement, binding: DirectiveBinding) {
   const { value } = binding;
+  const globalOpts = getGlobalOptions();
 
   // Determine if value is options object or the actual value
   let numericValue: number;
   let options: NumberFormatOptions;
+
+  // Get locale priority: i18n > global options > default
+  const defaultLocale =
+    (binding.instance as any)?.$i18n?.locale || globalOpts.locale || "en-US";
 
   if (typeof value === "object" && value !== null && !Array.isArray(value)) {
     // Value is options object, get numeric value from element text or data attribute
@@ -30,7 +36,7 @@ function formatNumber(el: HTMLElement, binding: DirectiveBinding) {
       useGrouping: true,
       percentage: false,
       accessibility: true,
-      locale: (binding.instance as any)?.$i18n?.locale || "en-US",
+      locale: defaultLocale,
       ...value,
     };
   } else {
@@ -42,7 +48,7 @@ function formatNumber(el: HTMLElement, binding: DirectiveBinding) {
       useGrouping: true,
       percentage: false,
       accessibility: true,
-      locale: (binding.instance as any)?.$i18n?.locale || "en-US",
+      locale: defaultLocale,
     };
   }
 

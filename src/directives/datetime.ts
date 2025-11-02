@@ -1,5 +1,6 @@
 import type { Directive, DirectiveBinding } from "vue";
 import type { DateTimeFormatOptions } from "../types";
+import { getGlobalOptions } from "../index";
 
 /**
  * DateTime formatting directive
@@ -15,10 +16,16 @@ const DateTimeDirective: Directive = {
 
 function formatDateTime(el: HTMLElement, binding: DirectiveBinding) {
   const { value } = binding;
+  const globalOpts = getGlobalOptions();
 
   // Determine if value is options object or the actual date value
   let inputValue: any;
   let options: DateTimeFormatOptions;
+
+  // Get locale and timezone priority: i18n > global options > default
+  const defaultLocale =
+    (binding.instance as any)?.$i18n?.locale || globalOpts.locale || "en-US";
+  const defaultTimezone = globalOpts.defaultTimezone || "UTC";
 
   if (
     typeof value === "object" &&
@@ -32,9 +39,9 @@ function formatDateTime(el: HTMLElement, binding: DirectiveBinding) {
     options = {
       dateStyle: "medium",
       timeStyle: "none",
-      timeZone: "UTC",
+      timeZone: defaultTimezone,
       accessibility: true,
-      locale: (binding.instance as any)?.$i18n?.locale || "en-US",
+      locale: defaultLocale,
       inputFormat: "auto",
       ...value,
     };
@@ -44,9 +51,9 @@ function formatDateTime(el: HTMLElement, binding: DirectiveBinding) {
     options = {
       dateStyle: "medium",
       timeStyle: "none",
-      timeZone: "UTC",
+      timeZone: defaultTimezone,
       accessibility: true,
-      locale: (binding.instance as any)?.$i18n?.locale || "en-US",
+      locale: defaultLocale,
       inputFormat: "auto",
     };
   }
