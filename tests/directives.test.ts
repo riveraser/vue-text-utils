@@ -22,7 +22,7 @@ describe("Currency Directive", () => {
     const element = wrapper.element as HTMLElement;
 
     // Should contain currency symbol and formatted number
-    expect(element.textContent).toMatch(/[\$£€¥]/);
+    expect(element.textContent).toMatch(/[$£€¥]/);
     expect(element.textContent).toMatch(/120/);
   });
 
@@ -156,7 +156,6 @@ describe("DateTime Directive", () => {
   });
 
   it("should handle different date styles", async () => {
-    const testDate = new Date("2025-11-01T20:25:20.000Z");
     const wrapper = mount(
       {
         template: '<p v-date-time="options">2025-11-01T20:25:20.000Z</p>',
