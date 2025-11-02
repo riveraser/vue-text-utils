@@ -13,8 +13,8 @@ export const formatDirectives = {
   'date-time': DateTimeDirective
 }
 
-// Default export - plugin that registers all directives
-const VueTextUtils = {
+// Main plugin that registers all directives
+export const VueTextUtils = {
   install(app: App) {
     // Register all format directives
     Object.entries(formatDirectives).forEach(([name, directive]) => {
@@ -23,6 +23,3 @@ const VueTextUtils = {
     })
   }
 }
-
-// Export as both named and default export
-export { VueTextUtils as default }

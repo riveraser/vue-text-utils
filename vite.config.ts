@@ -20,7 +20,9 @@ export default defineConfig({
         // Global variables to use for external dependencies
         globals: {
           vue: 'Vue'
-        }
+        },
+        // Use named exports only
+        exports: 'named'
       }
     },
     target: 'es2015',
