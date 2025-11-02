@@ -23,7 +23,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "type-check": "tsc --noEmit"
+    "lint:check": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
+    "type-check": "vue-tsc --noEmit"
   },
   "repository": {
     "type": "git",
