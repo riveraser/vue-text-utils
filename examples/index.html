@@ -1,148 +1,220 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vue Text Utils Demo</title>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .example {
-      margin: 20px 0;
-      padding: 15px;
-      border: 1px solid #e1e5e9;
-      border-radius: 8px;
-      background: #f9f9f9;
-    }
-    .result {
-      font-weight: bold;
-      color: #2c3e50;
-      margin-top: 10px;
-      padding: 10px;
-      background: white;
-      border-radius: 4px;
-      border-left: 4px solid #3498db;
-    }
-  </style>
-</head>
-<body>
-  <div id="app">
-    <h1>Vue Text Utils Demo</h1>
-    <p>A lightweight Vue 3 plugin for formatting text with custom directives.</p>
-    
-    <div class="example">
-      <h2>Currency Formatting</h2>
-      <p>Basic usage: <code><p v-currency="120">120</p></code></p>
-      <p class="result" v-currency="120">120</p>
-      
-      <p>With EUR currency: <code><p v-currency.eur="120">120</p></code></p>
-      <p class="result" v-currency.eur="120">120</p>
-      
-      <p>With options: <code><p v-currency="{ currency: 'USD', currencyDisplay: 'code' }">120</p></code></p>
-      <p class="result" v-currency="{ currency: 'USD', currencyDisplay: 'code' }">120</p>
-    </div>
-    
-    <div class="example">
-      <h2>Number Formatting</h2>
-      <p>Basic usage: <code><p v-number="1200">1200</p></code></p>
-      <p class="result" v-number="1200">1200</p>
-      
-      <p>Percentage: <code><p v-number="{ percentage: true }">0.25</p></code></p>
-      <p class="result" v-number="{ percentage: true }">0.25</p>
-      
-      <p>Custom decimals: <code><p v-number="{ minimumFractionDigits: 3, maximumFractionDigits: 3 }">42.123456</p></code></p>
-      <p class="result" v-number="{ minimumFractionDigits: 3, maximumFractionDigits: 3 }">42.123456</p>
-    </div>
-    
-    <div class="example">
-      <h2>DateTime Formatting</h2>
-      <p>Basic usage: <code><p v-date-time="'2025-11-01T20:25:20.000Z'">2025-11-01T20:25:20.000Z</p></code></p>
-      <p class="result" v-date-time="'2025-11-01T20:25:20.000Z'">2025-11-01T20:25:20.000Z</p>
-      
-      <p>Short format: <code><p v-date-time="{ dateStyle: 'short', timeStyle: 'short' }">'2025-11-01T20:25:20.000Z'</p></code></p>
-      <p class="result" v-date-time="{ dateStyle: 'short', timeStyle: 'short' }">'2025-11-01T20:25:20.000Z'</p>
-      
-      <p>Long format: <code><p v-date-time="{ dateStyle: 'long' }">'2025-11-01T20:25:20.000Z'</p></code></p>
-      <p class="result" v-date-time="{ dateStyle: 'long' }">'2025-11-01T20:25:20.000Z'</p>
-    </div>
-    
-    <div class="example">
-      <h2>Accessibility Features</h2>
-      <p>All directives include ARIA labels:</p>
-      <div style="background: white; padding: 10px; margin-top: 10px;">
-        <div v-currency="1234" aria-label="Currency: $1,234.00"></div>
-        <div v-number="1234" aria-label="Number: 1,234"></div>
-        <div v-date-time="'2025-11-01T20:25:20.000Z'" aria-label="Date: Nov 1, 2025 at 8:25 PM"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Text Utils Demo</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .example {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #e1e5e9;
+        border-radius: 8px;
+        background: #f9f9f9;
+      }
+      .result {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-top: 10px;
+        padding: 10px;
+        background: white;
+        border-radius: 4px;
+        border-left: 4px solid #3498db;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Vue Text Utils Demo</h1>
+      <p>
+        A lightweight Vue 3 plugin for formatting text with custom directives.
+      </p>
+
+      <div class="example">
+        <h2>Currency Formatting</h2>
+        <p>
+          Basic usage: <code><p v-currency="120">120</p></code>
+        </p>
+        <p class="result" v-currency="120">120</p>
+
+        <p>
+          With EUR currency: <code><p v-currency.eur="120">120</p></code>
+        </p>
+        <p class="result" v-currency.eur="120">120</p>
+
+        <p>
+          With options:
+          <code
+            ><p v-currency="{ currency: 'USD', currencyDisplay: 'code' }">
+              120
+            </p></code
+          >
+        </p>
+        <p
+          class="result"
+          v-currency="{ currency: 'USD', currencyDisplay: 'code' }"
+        >
+          120
+        </p>
+      </div>
+
+      <div class="example">
+        <h2>Number Formatting</h2>
+        <p>
+          Basic usage: <code><p v-number="1200">1200</p></code>
+        </p>
+        <p class="result" v-number="1200">1200</p>
+
+        <p>
+          Percentage: <code><p v-number="{ percentage: true }">0.25</p></code>
+        </p>
+        <p class="result" v-number="{ percentage: true }">0.25</p>
+
+        <p>
+          Custom decimals:
+          <code
+            ><p
+              v-number="{ minimumFractionDigits: 3, maximumFractionDigits: 3 }"
+            >
+              42.123456
+            </p></code
+          >
+        </p>
+        <p
+          class="result"
+          v-number="{ minimumFractionDigits: 3, maximumFractionDigits: 3 }"
+        >
+          42.123456
+        </p>
+      </div>
+
+      <div class="example">
+        <h2>DateTime Formatting</h2>
+        <p>
+          Basic usage:
+          <code
+            ><p v-date-time="'2025-11-01T20:25:20.000Z'">
+              2025-11-01T20:25:20.000Z
+            </p></code
+          >
+        </p>
+        <p class="result" v-date-time="'2025-11-01T20:25:20.000Z'">
+          2025-11-01T20:25:20.000Z
+        </p>
+
+        <p>
+          Short format:
+          <code
+            ><p v-date-time="{ dateStyle: 'short', timeStyle: 'short' }">
+              '2025-11-01T20:25:20.000Z'
+            </p></code
+          >
+        </p>
+        <p
+          class="result"
+          v-date-time="{ dateStyle: 'short', timeStyle: 'short' }"
+        >
+          '2025-11-01T20:25:20.000Z'
+        </p>
+
+        <p>
+          Long format:
+          <code
+            ><p v-date-time="{ dateStyle: 'long' }">
+              '2025-11-01T20:25:20.000Z'
+            </p></code
+          >
+        </p>
+        <p class="result" v-date-time="{ dateStyle: 'long' }">
+          '2025-11-01T20:25:20.000Z'
+        </p>
+      </div>
+
+      <div class="example">
+        <h2>Accessibility Features</h2>
+        <p>All directives include ARIA labels:</p>
+        <div style="background: white; padding: 10px; margin-top: 10px">
+          <div v-currency="1234" aria-label="Currency: $1,234.00"></div>
+          <div v-number="1234" aria-label="Number: 1,234"></div>
+          <div
+            v-date-time="'2025-11-01T20:25:20.000Z'"
+            aria-label="Date: Nov 1, 2025 at 8:25 PM"
+          ></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    // Mock Vue 3 for demo purposes
-    const { createApp, Directive } = Vue;
-    
-    // Simplified directive implementations for demo
-    const formatCurrency = {
-      mounted(el, binding) {
-        const value = parseFloat(binding.value) || 0
-        el.textContent = new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: binding.arg || 'USD'
-        }).format(value)
-      }
-    }
-    
-    const formatNumber = {
-      mounted(el, binding) {
-        const value = parseFloat(binding.value) || 0
-        const options = {
-          useGrouping: true,
-          ...binding.value
-        }
-        if (options.percentage) {
-          el.textContent = new Intl.NumberFormat('en-US', {
-            style: 'percent',
-            minimumFractionDigits: options.minimumFractionDigits,
-            maximumFractionDigits: options.maximumFractionDigits
-          }).format(value)
-        } else {
-          el.textContent = new Intl.NumberFormat('en-US', {
-            minimumFractionDigits: options.minimumFractionDigits,
-            maximumFractionDigits: options.maximumFractionDigits,
-            useGrouping: options.useGrouping
-          }).format(value)
-        }
-      }
-    }
-    
-    const formatDateTime = {
-      mounted(el, binding) {
-        const date = new Date(binding.value)
-        const options = {
-          dateStyle: 'medium',
-          ...binding.value
-        }
-        delete options.percentage
-        el.textContent = new Intl.DateTimeFormat('en-US', options).format(date)
-      }
-    }
-    
-    // Create demo app
-    const app = createApp({
-      mounted() {
-        // Register directives globally for demo
-        this.$.appContext.app.directive('currency', formatCurrency)
-        this.$.appContext.app.directive('number', formatNumber)
-        this.$.appContext.app.directive('date-time', formatDateTime)
-      }
-    })
-    
-    app.mount('#app')
-  </script>
-</body>
+    <script>
+      // Mock Vue 3 for demo purposes
+      const { createApp, Directive } = Vue;
+
+      // Simplified directive implementations for demo
+      const formatCurrency = {
+        mounted(el, binding) {
+          const value = parseFloat(binding.value) || 0;
+          el.textContent = new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: binding.arg || "USD",
+          }).format(value);
+        },
+      };
+
+      const formatNumber = {
+        mounted(el, binding) {
+          const value = parseFloat(binding.value) || 0;
+          const options = {
+            useGrouping: true,
+            ...binding.value,
+          };
+          if (options.percentage) {
+            el.textContent = new Intl.NumberFormat("en-US", {
+              style: "percent",
+              minimumFractionDigits: options.minimumFractionDigits,
+              maximumFractionDigits: options.maximumFractionDigits,
+            }).format(value);
+          } else {
+            el.textContent = new Intl.NumberFormat("en-US", {
+              minimumFractionDigits: options.minimumFractionDigits,
+              maximumFractionDigits: options.maximumFractionDigits,
+              useGrouping: options.useGrouping,
+            }).format(value);
+          }
+        },
+      };
+
+      const formatDateTime = {
+        mounted(el, binding) {
+          const date = new Date(binding.value);
+          const options = {
+            dateStyle: "medium",
+            ...binding.value,
+          };
+          delete options.percentage;
+          el.textContent = new Intl.DateTimeFormat("en-US", options).format(
+            date,
+          );
+        },
+      };
+
+      // Create demo app
+      const app = createApp({
+        mounted() {
+          // Register directives globally for demo
+          this.$.appContext.app.directive("currency", formatCurrency);
+          this.$.appContext.app.directive("number", formatNumber);
+          this.$.appContext.app.directive("date-time", formatDateTime);
+        },
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
 </html>

@@ -6,25 +6,25 @@ export interface VueTextUtilsOptions {
    * Default locale to use for formatting
    * @default 'en-US'
    */
-  locale?: string
-  
+  locale?: string;
+
   /**
    * Default currency code for currency formatting
    * @default 'USD'
    */
-  defaultCurrency?: string
-  
+  defaultCurrency?: string;
+
   /**
    * Default timezone for date formatting
    * @default 'UTC'
    */
-  defaultTimezone?: string
-  
+  defaultTimezone?: string;
+
   /**
    * Enable debugging mode for development
    * @default false
    */
-  debug?: boolean
+  debug?: boolean;
 }
 
 /**
@@ -34,18 +34,18 @@ export interface BaseFormatOptions {
   /**
    * Override locale for this specific formatting
    */
-  locale?: string
-  
+  locale?: string;
+
   /**
    * Enable accessibility features (semantic HTML, ARIA labels)
    * @default true
    */
-  accessibility?: boolean
-  
+  accessibility?: boolean;
+
   /**
    * Custom CSS class to add to formatted element
    */
-  class?: string
+  class?: string;
 }
 
 /**
@@ -55,25 +55,25 @@ export interface CurrencyFormatOptions extends BaseFormatOptions {
   /**
    * Currency code (USD, EUR, GBP, etc.)
    */
-  currency: string
-  
+  currency: string;
+
   /**
    * Currency display format
    * @default 'symbol'
    */
-  currencyDisplay?: 'symbol' | 'code' | 'name' | 'narrowSymbol'
-  
+  currencyDisplay?: "symbol" | "code" | "name" | "narrowSymbol";
+
   /**
    * Number of decimal places
    * @default 2
    */
-  minimumFractionDigits?: number
-  
+  minimumFractionDigits?: number;
+
   /**
    * Maximum number of decimal places
    * @default 2
    */
-  maximumFractionDigits?: number
+  maximumFractionDigits?: number;
 }
 
 /**
@@ -83,24 +83,24 @@ export interface NumberFormatOptions extends BaseFormatOptions {
   /**
    * Number of decimal places
    */
-  minimumFractionDigits?: number
-  
+  minimumFractionDigits?: number;
+
   /**
    * Maximum number of decimal places
    */
-  maximumFractionDigits?: number
-  
+  maximumFractionDigits?: number;
+
   /**
    * Use grouping for thousands separator
    * @default true
    */
-  useGrouping?: boolean
-  
+  useGrouping?: boolean;
+
   /**
    * Format as percentage
    * @default false
    */
-  percentage?: boolean
+  percentage?: boolean;
 }
 
 /**
@@ -110,30 +110,33 @@ export interface DateTimeFormatOptions extends BaseFormatOptions {
   /**
    * Date/time style
    */
-  dateStyle?: 'full' | 'long' | 'medium' | 'short' | 'none'
-  
+  dateStyle?: "full" | "long" | "medium" | "short" | "none";
+
   /**
    * Time style
    */
-  timeStyle?: 'full' | 'long' | 'medium' | 'short' | 'none'
-  
+  timeStyle?: "full" | "long" | "medium" | "short" | "none";
+
   /**
    * Timezone to use
    */
-  timeZone?: string
-  
+  timeZone?: string;
+
   /**
    * Custom format string (using Intl formatToParts tokens)
    */
-  format?: string
-  
+  format?: string;
+
   /**
    * Input date format hint for parsing
    */
-  inputFormat?: string
+  inputFormat?: string;
 }
 
 /**
  * Combined format options type
  */
-export type FormatDirectiveOptions = CurrencyFormatOptions | NumberFormatOptions | DateTimeFormatOptions
+export type FormatDirectiveOptions =
+  | CurrencyFormatOptions
+  | NumberFormatOptions
+  | DateTimeFormatOptions;
