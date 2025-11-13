@@ -4,21 +4,27 @@
 export interface VueTextUtilsOptions {
   /**
    * Default locale to use for formatting
-   * @default 'en-US'
+   * @default auto-detected from browser or 'en-US'
    */
   locale?: string;
 
   /**
    * Default currency code for currency formatting
-   * @default 'USD'
+   * @default auto-detected from locale or 'USD'
    */
   defaultCurrency?: string;
 
   /**
    * Default timezone for date formatting
-   * @default 'UTC'
+   * @default auto-detected from browser or 'UTC'
    */
   defaultTimezone?: string;
+
+  /**
+   * Enable automatic detection of user preferences from browser
+   * @default true
+   */
+  autoDetect?: boolean;
 
   /**
    * Enable debugging mode for development

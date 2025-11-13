@@ -3,9 +3,19 @@ import CurrencyDirective from "./directives/currency";
 import NumberDirective from "./directives/number";
 import DateTimeDirective from "./directives/datetime";
 import type { VueTextUtilsOptions } from "./types";
+import { detectUserPreferences } from "./utils/auto-detect";
 
 // Export individual directives for manual registration
 export { CurrencyDirective, NumberDirective, DateTimeDirective };
+
+// Export utilities
+export {
+  detectUserLocale,
+  detectUserTimezone,
+  detectUserCurrency,
+  detectUserPreferences,
+  hasBrowserSupport,
+} from "./utils/auto-detect";
 
 // Export types
 export type {
@@ -27,6 +37,7 @@ let globalOptions: VueTextUtilsOptions = {
   locale: "en-US",
   defaultCurrency: "USD",
   defaultTimezone: "UTC",
+  autoDetect: true,
   debug: false,
 };
 
@@ -36,17 +47,26 @@ export const getGlobalOptions = (): VueTextUtilsOptions => globalOptions;
 // Main plugin that registers all directives
 export const VueTextUtils = {
   install(app: App, options: VueTextUtilsOptions = {}) {
-    // Merge user options with defaults
+    // Auto-detect user preferences if enabled
+    const autoDetectedPrefs =
+      options.autoDetect !== false ? detectUserPreferences() : null;
+
+    // Merge user options with auto-detected preferences and defaults
     globalOptions = {
-      locale: "en-US",
-      defaultCurrency: "USD",
-      defaultTimezone: "UTC",
-      debug: false,
-      ...options,
+      locale: options.locale || autoDetectedPrefs?.locale || "en-US",
+      defaultCurrency:
+        options.defaultCurrency || autoDetectedPrefs?.currency || "USD",
+      defaultTimezone:
+        options.defaultTimezone || autoDetectedPrefs?.timezone || "UTC",
+      autoDetect: options.autoDetect ?? true,
+      debug: options.debug ?? false,
     };
 
     if (globalOptions.debug) {
       console.log("VueTextUtils initialized with options:", globalOptions);
+      if (autoDetectedPrefs) {
+        console.log("Auto-detected user preferences:", autoDetectedPrefs);
+      }
     }
 
     // Make global options available to the app
