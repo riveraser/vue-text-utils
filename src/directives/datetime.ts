@@ -1,85 +1,68 @@
 import type { Directive, DirectiveBinding } from "vue";
-import type { DateTimeFormatOptions } from "../types";
 import { getGlobalOptions } from "../index";
+import {
+  createDirective,
+  parseDirectiveBinding,
+  extractElementValue,
+  applyCommonAttributes,
+  handleDirectiveError,
+  validateDateValue,
+  getDefaultLocale,
+  type BaseFormatOptions,
+} from "../utils/directive-helpers";
+
+// Extend base options with datetime-specific options
+interface DateTimeOptions extends BaseFormatOptions {
+  dateStyle?: "full" | "long" | "medium" | "short" | "none";
+  timeStyle?: "full" | "long" | "medium" | "short" | "none";
+  timeZone?: string;
+  inputFormat?: "auto";
+}
 
 /**
  * DateTime formatting directive
  */
-const DateTimeDirective: Directive = {
-  mounted(el, binding) {
-    formatDateTime(el, binding);
-  },
-  updated(el, binding) {
-    formatDateTime(el, binding);
-  },
-};
+const DateTimeDirective: Directive = createDirective(formatDateTime);
 
 function formatDateTime(el: HTMLElement, binding: DirectiveBinding) {
-  const { value } = binding;
   const globalOpts = getGlobalOptions();
 
-  // Determine if value is options object or the actual date value
-  let inputValue: any;
-  let options: DateTimeFormatOptions;
-
-  // Get locale and timezone priority: i18n > global options > default
-  const defaultLocale =
-    (binding.instance as any)?.$i18n?.locale || globalOpts.locale || "en-US";
+  // Get default options
+  const defaultLocale = getDefaultLocale(binding);
   const defaultTimezone = globalOpts.defaultTimezone || "UTC";
 
-  if (
-    typeof value === "object" &&
-    value !== null &&
-    !Array.isArray(value) &&
-    !(value instanceof Date)
-  ) {
-    // Value is options object, get date value from element text or data attribute
-    const elementText = el.textContent || el.getAttribute("data-value") || "";
-    inputValue = elementText;
-    options = {
-      dateStyle: "medium",
-      timeStyle: "none",
-      timeZone: defaultTimezone,
-      accessibility: true,
-      locale: defaultLocale,
-      inputFormat: "auto",
-      ...value,
-    };
+  const defaultOptions: DateTimeOptions = {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: defaultTimezone,
+    accessibility: true,
+    locale: defaultLocale,
+    inputFormat: "auto",
+  };
+
+  // Parse the directive binding
+  const { mode, value, options } = parseDirectiveBinding(
+    binding,
+    defaultOptions,
+  );
+
+  // Get the date value based on mode
+  let dateValue: Date | null;
+  let rawValue: string | number;
+
+  if (mode === "implicit" || mode === "options") {
+    rawValue = extractElementValue(el, "");
+    dateValue = validateDateValue(rawValue, "DateTime");
   } else {
-    // Value is the date value
-    inputValue = value;
-    options = {
-      dateStyle: "medium",
-      timeStyle: "none",
-      timeZone: defaultTimezone,
-      accessibility: true,
-      locale: defaultLocale,
-      inputFormat: "auto",
-    };
+    rawValue = value as string | number;
+    dateValue = validateDateValue(rawValue, "DateTime");
+  }
+
+  if (dateValue === null) {
+    return;
   }
 
   try {
-    // Parse the input date
-    let date: Date;
-
-    if (inputValue instanceof Date) {
-      date = inputValue;
-    } else if (
-      typeof inputValue === "string" ||
-      typeof inputValue === "number"
-    ) {
-      // Try to parse the string/number as a date
-      const parsed = new Date(inputValue);
-      if (isNaN(parsed.getTime())) {
-        console.warn("DateTime directive: Invalid date value:", inputValue);
-        return;
-      }
-      date = parsed;
-    } else {
-      console.warn("DateTime directive: Invalid date value:", inputValue);
-      return;
-    }
-
     // Format using Intl.DateTimeFormat
     const formatterOptions: Intl.DateTimeFormatOptions = {};
 
@@ -96,24 +79,22 @@ function formatDateTime(el: HTMLElement, binding: DirectiveBinding) {
     }
 
     const formatter = new Intl.DateTimeFormat(options.locale, formatterOptions);
-    const formatted = formatter.format(date);
+    const formatted = formatter.format(dateValue);
 
-    // Update element content
-    el.textContent = formatted;
-
-    // Add accessibility attributes if enabled
-    if (options.accessibility) {
-      el.setAttribute("aria-label", `Date: ${formatted}`);
-      el.setAttribute("data-date-value", date.toISOString());
-      el.setAttribute("data-timezone", options.timeZone || "UTC");
-    }
-
-    // Add custom class if provided
-    if (options.class) {
-      el.classList.add(options.class);
-    }
+    // Apply common attributes and additional datetime-specific attributes
+    applyCommonAttributes(
+      el,
+      options,
+      formatted,
+      "Date",
+      {
+        "data-date-value": dateValue.toISOString(),
+        "data-timezone": options.timeZone || "UTC",
+      },
+      rawValue,
+    );
   } catch (error) {
-    console.error("DateTime directive formatting error:", error);
+    handleDirectiveError("DateTime", error, value);
   }
 }
 

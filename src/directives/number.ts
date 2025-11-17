@@ -1,60 +1,60 @@
 import type { Directive, DirectiveBinding } from "vue";
-import type { NumberFormatOptions } from "../types";
-import { getGlobalOptions } from "../index";
+import {
+  createDirective,
+  parseDirectiveBinding,
+  extractElementValue,
+  applyCommonAttributes,
+  handleDirectiveError,
+  validateNumericValue,
+  getDefaultLocale,
+  type BaseFormatOptions,
+} from "../utils/directive-helpers";
+
+// Extend base options with number-specific options
+interface NumberOptions extends BaseFormatOptions {
+  minimumFractionDigits?: number;
+  maximumFractionDigits?: number;
+  useGrouping?: boolean;
+  percentage?: boolean;
+}
 
 /**
  * Number formatting directive
  */
-const NumberDirective: Directive = {
-  mounted(el, binding) {
-    formatNumber(el, binding);
-  },
-  updated(el, binding) {
-    formatNumber(el, binding);
-  },
-};
+const NumberDirective: Directive = createDirective(formatNumber);
 
 function formatNumber(el: HTMLElement, binding: DirectiveBinding) {
-  const { value } = binding;
-  const globalOpts = getGlobalOptions();
+  // Get default options
+  const defaultLocale = getDefaultLocale(binding);
 
-  // Determine if value is options object or the actual value
-  let numericValue: number;
-  let options: NumberFormatOptions;
+  const defaultOptions: NumberOptions = {
+    minimumFractionDigits: undefined,
+    maximumFractionDigits: undefined,
+    useGrouping: true,
+    percentage: false,
+    accessibility: true,
+    locale: defaultLocale,
+  };
 
-  // Get locale priority: i18n > global options > default
-  const defaultLocale =
-    (binding.instance as any)?.$i18n?.locale || globalOpts.locale || "en-US";
+  // Parse the directive binding
+  const { mode, value, options } = parseDirectiveBinding(
+    binding,
+    defaultOptions,
+  );
 
-  if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-    // Value is options object, get numeric value from element text or data attribute
-    const elementText = el.textContent || el.getAttribute("data-value") || "0";
-    numericValue = parseFloat(elementText);
-    options = {
-      minimumFractionDigits: undefined,
-      maximumFractionDigits: undefined,
-      useGrouping: true,
-      percentage: false,
-      accessibility: true,
-      locale: defaultLocale,
-      ...value,
-    };
+  // Get the numeric value based on mode
+  let numericValue: number | null;
+  let rawValue: string | number;
+
+  if (mode === "implicit" || mode === "options") {
+    rawValue = extractElementValue(el, "0");
+    numericValue = validateNumericValue(rawValue, "Number");
   } else {
-    // Value is the numeric value
-    numericValue = parseFloat(String(value));
-    options = {
-      minimumFractionDigits: undefined,
-      maximumFractionDigits: undefined,
-      useGrouping: true,
-      percentage: false,
-      accessibility: true,
-      locale: defaultLocale,
-    };
+    rawValue = value as string | number;
+    numericValue = validateNumericValue(rawValue, "Number");
   }
 
-  // Parse the input value
-  if (isNaN(numericValue)) {
-    console.warn("Number directive: Invalid numeric value:", value);
+  if (numericValue === null) {
     return;
   }
 
@@ -76,21 +76,19 @@ function formatNumber(el: HTMLElement, binding: DirectiveBinding) {
       formatted = formatter.format(numericValue);
     }
 
-    // Update element content
-    el.textContent = formatted;
-
-    // Add accessibility attributes if enabled
-    if (options.accessibility) {
-      el.setAttribute("aria-label", `Number: ${formatted}`);
-      el.setAttribute("data-number-value", numericValue.toString());
-    }
-
-    // Add custom class if provided
-    if (options.class) {
-      el.classList.add(options.class);
-    }
+    // Apply common attributes and additional number-specific attributes
+    applyCommonAttributes(
+      el,
+      options,
+      formatted,
+      "Number",
+      {
+        "data-number-value": numericValue.toString(),
+      },
+      rawValue,
+    );
   } catch (error) {
-    console.error("Number directive formatting error:", error);
+    handleDirectiveError("Number", error, value);
   }
 }
 
