@@ -46,7 +46,6 @@
   <body>
     <div id="app">
       <h1>Vue Text Utils - Implicit vs Explicit Usage</h1>
-
       <div class="example-section">
         <h2>Currency Formatting</h2>
         <div class="comparison">
@@ -112,7 +111,7 @@
       </div>
 
       <div class="example-section">
-        <h2>Date-Time Formatting</h2>
+        <h2>Date-Time Formatting (Now includes time!)</h2>
         <div class="comparison">
           <div class="implicit">
             <h3>Implicit Mode (Recommended)</h3>
@@ -134,6 +133,34 @@
             <p>
               Result:
               <strong v-date-time>{{ new Date().toISOString() }}</strong>
+            </p>
+
+            <p>
+              Code:
+              <code
+                >&lt;p v-date-time="{ dateStyle: 'short', timeStyle: 'medium'
+                }"&gt;2025-11-01T20:25:20.000Z&lt;/p&gt;</code
+              >
+            </p>
+            <p>
+              Result:
+              <strong v-date-time="{ dateStyle: 'short', timeStyle: 'medium' }"
+                >2025-11-01T20:25:20.000Z</strong
+              >
+            </p>
+
+            <p>
+              Code:
+              <code
+                >&lt;p v-date-time="{ timeStyle: 'full'
+                }"&gt;2025-11-01T20:25:20.000Z&lt;/p&gt;</code
+              >
+            </p>
+            <p>
+              Result:
+              <strong v-date-time="{ timeStyle: 'full' }"
+                >2025-11-01T20:25:20.000Z</strong
+              >
             </p>
           </div>
           <div class="explicit">
@@ -163,6 +190,20 @@
               Result:
               <strong v-date-time="new Date().toISOString()"
                 >Original content replaced</strong
+              >
+            </p>
+
+            <p>
+              Code:
+              <code
+                >&lt;p v-date-time="{ dateStyle: 'long', timeStyle: 'none'
+                }"&gt;2025-11-15T20:25:20.000Z&lt;/p&gt;</code
+              >
+            </p>
+            <p>
+              Result:
+              <strong v-date-time="{ dateStyle: 'long', timeStyle: 'none' }"
+                >2025-11-15T20:25:20.000Z</strong
               >
             </p>
           </div>
@@ -232,15 +273,17 @@
     </div>
 
     <script type="module">
-      // Note: In a real project, you'd import from npm package
-      // This is just for demo purposes - you'd need to build and include the actual library
+      // Import the actual Vue Text Utils library
+      // Must build the library first using `npm run build` command
+      import { VueTextUtils } from "../dist/index.es.js";
 
       const { createApp } = Vue;
 
-      // Mock directives for demo (replace with actual import)
+      // Create the app with real directives
       const app = createApp({
         data() {
           return {
+            browserLocale: navigator.language || "unknown",
             product: {
               name: "Awesome Product",
               price: 120,
@@ -251,27 +294,9 @@
         },
       });
 
-      // In real usage, you'd do: app.use(VueTextUtils);
-      // For demo, we'll add placeholder directives
-      app.directive("currency", {
-        mounted(el) {
-          el.style.fontWeight = "bold";
-          el.textContent = "$" + el.textContent;
-        },
-        updated(el) {
-          el.style.fontWeight = "bold";
-        },
-      });
-      app.directive("number", {
-        mounted(el) {
-          el.textContent = parseInt(el.textContent).toLocaleString();
-        },
-      });
-      app.directive("date-time", {
-        mounted(el) {
-          const date = new Date(el.textContent);
-          el.textContent = date.toLocaleDateString();
-        },
+      // Use the actual Vue Text Utils plugin
+      app.use(VueTextUtils, {
+        debug: true,
       });
 
       app.mount("#app");

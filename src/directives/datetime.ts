@@ -33,7 +33,7 @@ function formatDateTime(el: HTMLElement, binding: DirectiveBinding) {
 
   const defaultOptions: DateTimeOptions = {
     dateStyle: "medium",
-    timeStyle: "none",
+    timeStyle: "short",
     timeZone: defaultTimezone,
     accessibility: true,
     locale: defaultLocale,

@@ -82,6 +82,9 @@ export function detectUserCurrency(locale?: string): string {
 /**
  * Maps common locales to their typical currencies
  * This is a fallback when Intl API doesn't provide currency info
+ * SR:
+ * WARNING: This is not exhaustive and may not cover all cases
+ * so you must add the currency manually if needed.
  */
 function getCurrencyForLocale(locale: string): string {
   const currencyMap: Record<string, string> = {
@@ -133,6 +136,11 @@ function getCurrencyForLocale(locale: string): string {
     "es-CL": "CLP",
     "es-CO": "COP",
     "es-PE": "PEN",
+    "es-US": "USD", // Spanish speakers in US
+    "ca-CA": "CAD",
+    "en-JM": "JMD",
+    "en-BB": "BBD",
+    "en-TT": "TTD",
 
     // Others
     "ru-RU": "RUB",
