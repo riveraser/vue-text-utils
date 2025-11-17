@@ -3,6 +3,9 @@ dist/
 build/
 coverage/
 
+# GitHub Pages demo (generated files)
+docs/
+
 # Dependencies
 node_modules/
 

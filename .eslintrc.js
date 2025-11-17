@@ -23,5 +23,5 @@ module.exports = {
     "prefer-const": "error",
     "no-var": "error",
   },
-  ignorePatterns: ["dist/**", "node_modules/**", "coverage/**"],
+  ignorePatterns: ["dist/**", "node_modules/**", "coverage/**", "docs/**"],
 };

@@ -2,9 +2,9 @@
 
 A lightweight Vue 3 plugin offering a collection of custom directives for formatting text directly in your templates. Format currency, numbers, and date-time values with intuitive syntax like `v-format.currency`, `v-format.number`, and `v-format.date-time`. Designed for internationalization, accessibility, and rapid development.
 
-## 🎯 [Live Demo](https://riveraser.github.io/vue-text-utils/)
+## 🎯 [Live Demo](https://riveraser.github.io/vue-text-utils/){:target="\_blank"}
 
-Check out the interactive demo to see all features in action!
+Check out the interactive demo to see all features in action! Or visit https://riveraser.github.io/vue-text-utils
 
 ## Install Instructions:
 
