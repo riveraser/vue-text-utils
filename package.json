@@ -1,6 +1,6 @@
 {
   "name": "@riveraser/vue-text-utils",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A lightweight Vue 3 plugin offering a collection of custom directives for formatting text directly in your templates.",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
