@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Text Utils - Implicit Usage Example</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+      }
+      .example-section {
+        margin: 30px 0;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .comparison {
+        display: flex;
+        gap: 20px;
+      }
+      .implicit,
+      .explicit {
+        flex: 1;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 3px;
+      }
+      .implicit {
+        background: #e8f5e8;
+      }
+      .explicit {
+        background: #f0f8ff;
+      }
+      h3 {
+        margin-top: 0;
+      }
+      code {
+        background: #f4f4f4;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Vue Text Utils - Implicit vs Explicit Usage</h1>
+
+      <div class="example-section">
+        <h2>Currency Formatting</h2>
+        <div class="comparison">
+          <div class="implicit">
+            <h3>Implicit Mode (Recommended)</h3>
+            <p>Code: <code>&lt;p v-currency&gt;120.50&lt;/p&gt;</code></p>
+            <p>Result: <strong v-currency>120.50</strong></p>
+
+            <p>Code: <code>&lt;p v-currency:EUR&gt;89.99&lt;/p&gt;</code></p>
+            <p>Result: <strong v-currency:EUR>89.99</strong></p>
+          </div>
+          <div class="explicit">
+            <h3>Explicit Mode</h3>
+            <p>
+              Code: <code>&lt;p v-currency="120.50"&gt;Original&lt;/p&gt;</code>
+            </p>
+            <p>
+              Result:
+              <strong v-currency="120.50">Original content replaced</strong>
+            </p>
+
+            <p>
+              Code:
+              <code>&lt;p v-currency:EUR="89.99"&gt;Original&lt;/p&gt;</code>
+            </p>
+            <p>
+              Result:
+              <strong v-currency:EUR="89.99">Original content replaced</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="example-section">
+        <h2>Number Formatting</h2>
+        <div class="comparison">
+          <div class="implicit">
+            <h3>Implicit Mode (Recommended)</h3>
+            <p>Code: <code>&lt;p v-number&gt;1234567&lt;/p&gt;</code></p>
+            <p>Result: <strong v-number>1234567</strong></p>
+
+            <p>Code: <code>&lt;p v-number&gt;0.25&lt;/p&gt;</code></p>
+            <p>Result: <strong v-number>0.25</strong></p>
+          </div>
+          <div class="explicit">
+            <h3>Explicit Mode</h3>
+            <p>
+              Code: <code>&lt;p v-number="1234567"&gt;Original&lt;/p&gt;</code>
+            </p>
+            <p>
+              Result:
+              <strong v-number="1234567">Original content replaced</strong>
+            </p>
+
+            <p>
+              Code: <code>&lt;p v-number="0.25"&gt;Original&lt;/p&gt;</code>
+            </p>
+            <p>
+              Result: <strong v-number="0.25">Original content replaced</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="example-section">
+        <h2>Date-Time Formatting</h2>
+        <div class="comparison">
+          <div class="implicit">
+            <h3>Implicit Mode (Recommended)</h3>
+            <p>
+              Code:
+              <code
+                >&lt;p v-date-time&gt;2025-11-01T20:25:20.000Z&lt;/p&gt;</code
+              >
+            </p>
+            <p>Result: <strong v-date-time>2025-11-01T20:25:20.000Z</strong></p>
+
+            <p>
+              Code:
+              <code
+                >&lt;p v-date-time&gt;{{ new Date().toISOString()
+                }}&lt;/p&gt;</code
+              >
+            </p>
+            <p>
+              Result:
+              <strong v-date-time>{{ new Date().toISOString() }}</strong>
+            </p>
+          </div>
+          <div class="explicit">
+            <h3>Explicit Mode</h3>
+            <p>
+              Code:
+              <code
+                >&lt;p
+                v-date-time="'2025-11-01T20:25:20.000Z'"&gt;Original&lt;/p&gt;</code
+              >
+            </p>
+            <p>
+              Result:
+              <strong v-date-time="'2025-11-01T20:25:20.000Z'"
+                >Original content replaced</strong
+              >
+            </p>
+
+            <p>
+              Code:
+              <code
+                >&lt;p v-date-time="new
+                Date().toISOString()"&gt;Original&lt;/p&gt;</code
+              >
+            </p>
+            <p>
+              Result:
+              <strong v-date-time="new Date().toISOString()"
+                >Original content replaced</strong
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="example-section">
+        <h2>Options Mode (Works with both implicit and explicit)</h2>
+        <div class="comparison">
+          <div class="implicit">
+            <h3>Implicit + Options</h3>
+            <p>
+              Code:
+              <code
+                >&lt;p v-currency="{ currency: 'JPY' }"&gt;1000&lt;/p&gt;</code
+              >
+            </p>
+            <p>
+              Result: <strong v-currency="{ currency: 'JPY' }">1000</strong>
+            </p>
+
+            <p>
+              Code:
+              <code
+                >&lt;p v-number="{ percentage: true }"&gt;0.15&lt;/p&gt;</code
+              >
+            </p>
+            <p>Result: <strong v-number="{ percentage: true }">0.15</strong></p>
+          </div>
+          <div class="explicit">
+            <h3>Explicit + Options</h3>
+            <p>
+              Note: For explicit with options, you can still use the implicit
+              pattern where the directive reads from element content when you
+              pass only options without a value.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="example-section">
+        <h2>Real-world Example: Product Card</h2>
+        <div
+          style="
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 300px;
+          "
+        >
+          <h3>{{ product.name }}</h3>
+          <p
+            class="price"
+            v-currency
+            style="font-size: 1.2em; font-weight: bold; color: green"
+          >
+            {{ product.price }}
+          </p>
+          <p class="date" v-date-time style="color: gray; font-size: 0.9em">
+            {{ product.createdAt }}
+          </p>
+          <p class="views" v-number style="font-size: 0.9em">
+            {{ product.views }} views
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      // Note: In a real project, you'd import from npm package
+      // This is just for demo purposes - you'd need to build and include the actual library
+
+      const { createApp } = Vue;
+
+      // Mock directives for demo (replace with actual import)
+      const app = createApp({
+        data() {
+          return {
+            product: {
+              name: "Awesome Product",
+              price: 120,
+              createdAt: "2025-11-13T10:30:00Z",
+              views: 1234567,
+            },
+          };
+        },
+      });
+
+      // In real usage, you'd do: app.use(VueTextUtils);
+      // For demo, we'll add placeholder directives
+      app.directive("currency", {
+        mounted(el) {
+          el.style.fontWeight = "bold";
+          el.textContent = "$" + el.textContent;
+        },
+        updated(el) {
+          el.style.fontWeight = "bold";
+        },
+      });
+      app.directive("number", {
+        mounted(el) {
+          el.textContent = parseInt(el.textContent).toLocaleString();
+        },
+      });
+      app.directive("date-time", {
+        mounted(el) {
+          const date = new Date(el.textContent);
+          el.textContent = date.toLocaleDateString();
+        },
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>

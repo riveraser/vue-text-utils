@@ -99,23 +99,42 @@ app.mount("#app");
 ### Basic Usage:
 
 ```html
-<!-- Currency formatting -->
-<p v-currency="120">120</p>
-<p v-currency:EUR="120">120</p>
+<!-- Currency formatting (implicit - reads value from element content) -->
+<p v-currency>120</p>
+<!-- Output: $120.00 -->
+<p v-currency:EUR>120</p>
+<!-- Output: €120.00 -->
 
-<!-- Number formatting -->
-<p v-number="1250">1250</p>
+<!-- Currency formatting (explicit - uses binding value) -->
+<p v-currency="120">Price will be replaced</p>
+<p v-currency:EUR="120">Price will be replaced</p>
 
-<!-- Date-time formatting -->
-<p v-date-time="'2025-11-01T20:25:20.000Z'">2025-11-01T20:25:20.000Z</p>
+<!-- Number formatting (implicit) -->
+<p v-number>1250</p>
+<!-- Output: 1,250 -->
+
+<!-- Number formatting (explicit) -->
+<p v-number="1250">Number will be replaced</p>
+
+<!-- Date-time formatting (implicit) -->
+<p v-date-time>2025-11-01T20:25:20.000Z</p>
+
+<!-- Date-time formatting (explicit) -->
+<p v-date-time="'2025-11-01T20:25:20.000Z'">Date will be replaced</p>
 ```
 
 ### Prefixed Usage (also available):
 
 ```html
-<p v-format.currency="120">120</p>
-<p v-format.number="1250">1250</p>
-<p v-format.date-time="'2025-11-01T20:25:20.000Z'">2025-11-01T20:25:20.000Z</p>
+<!-- Implicit usage (reads from element content) -->
+<p v-format.currency>120</p>
+<p v-format.number>1250</p>
+<p v-format.date-time>2025-11-01T20:25:20.000Z</p>
+
+<!-- Explicit usage (uses binding value) -->
+<p v-format.currency="120">Content replaced</p>
+<p v-format.number="1250">Content replaced</p>
+<p v-format.date-time="'2025-11-01T20:25:20.000Z'">Content replaced</p>
 ```
 
 ### Advanced Usage with Options:
@@ -141,14 +160,14 @@ app.mount("#app");
   <div class="product-card">
     <h3>{{ product.name }}</h3>
 
-    <!-- Price shows in user's currency automatically -->
-    <p class="price" v-currency="product.price">{{ product.price }}</p>
+    <!-- Price shows in user's currency automatically (implicit mode) -->
+    <p class="price" v-currency>{{ product.price }}</p>
 
-    <!-- Date shows in user's timezone automatically -->
-    <p class="date" v-date-time="product.createdAt">{{ product.createdAt }}</p>
+    <!-- Date shows in user's timezone automatically (implicit mode) -->
+    <p class="date" v-date-time>{{ product.createdAt }}</p>
 
-    <!-- Numbers formatted according to user's locale -->
-    <p class="views" v-number="product.views">{{ product.views }}</p>
+    <!-- Numbers formatted according to user's locale (implicit mode) -->
+    <p class="views" v-number>{{ product.views }}</p>
   </div>
 </template>
 
@@ -178,17 +197,40 @@ The directives use the following priority order for locale and formatting option
 3. **Global plugin options**
 4. **Built-in defaults** (lowest priority)
 
+### Implicit vs Explicit Mode:
+
+**Implicit Mode** (recommended for most cases):
+
+- Use when the value to format is already in the element's content
+- Syntax: `<p v-currency>120</p>`
+- The directive reads the value from the element's text content
+- Cleaner, more intuitive syntax
+
+**Explicit Mode**:
+
+- Use when you need to pass the value as a binding
+- Syntax: `<p v-currency="120">Content gets replaced</p>`
+- The directive uses the binding value and replaces element content
+- Useful for dynamic values from component data
+
+**Options Mode**:
+
+- Pass formatting options as an object
+- Works with both implicit and explicit modes
+- Implicit: `<p v-currency="{ currency: 'EUR' }">120</p>`
+- Explicit: `<p v-currency="{ value: 120, currency: 'EUR' }">Replaced</p>`
+
 Example:
 
 ```js
 // Global options set EUR as default
 app.use(VueTextUtils, { defaultCurrency: "EUR", locale: "de-DE" });
 
-// This will use USD (directive option overrides global)
-<p v-currency="{ currency: 'USD' }">100</p>
+// Implicit mode with directive option override (USD overrides global EUR)
+<p v-currency:USD>100</p>
 
-// This will use EUR (from global options)
-<p v-currency="100">100</p>
+// Explicit mode with global defaults (uses EUR from global options)
+<p v-currency="100">Content replaced with formatted value</p>
 ```
 
 ## Global Options:

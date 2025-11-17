@@ -1,63 +1,65 @@
 import type { Directive, DirectiveBinding } from "vue";
-import type { CurrencyFormatOptions } from "../types";
 import { getGlobalOptions } from "../index";
+import {
+  createDirective,
+  parseDirectiveBinding,
+  extractElementValue,
+  applyCommonAttributes,
+  handleDirectiveError,
+  validateNumericValue,
+  getDefaultLocale,
+  type BaseFormatOptions,
+} from "../utils/directive-helpers";
+
+// Extend base options with currency-specific options
+interface CurrencyOptions extends BaseFormatOptions {
+  currency?: string;
+  currencyDisplay?: "symbol" | "code" | "name";
+  minimumFractionDigits?: number;
+  maximumFractionDigits?: number;
+}
 
 // Currency formatting directive
-const CurrencyDirective: Directive = {
-  mounted(el, binding) {
-    formatCurrency(el, binding);
-  },
-  updated(el, binding) {
-    formatCurrency(el, binding);
-  },
-};
+const CurrencyDirective: Directive = createDirective(formatCurrency);
 
 function formatCurrency(el: HTMLElement, binding: DirectiveBinding) {
-  const { value, arg } = binding;
+  const { arg } = binding;
   const globalOpts = getGlobalOptions();
 
-  // Determine if value is options object or the actual value
-  let numericValue: number;
-  let options: CurrencyFormatOptions;
-
-  // Get locale priority: i18n > global options > default
-  const defaultLocale =
-    (binding.instance as any)?.$i18n?.locale || globalOpts.locale || "en-US";
+  // Get default options
+  const defaultLocale = getDefaultLocale(binding);
   const defaultCurrency = arg || globalOpts.defaultCurrency || "USD";
 
-  if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-    // Value is options object, get numeric value from element text or data attribute
-    const elementText = el.textContent || el.getAttribute("data-value") || "0";
-    numericValue = parseFloat(elementText);
-    options = {
-      currency: defaultCurrency,
-      currencyDisplay: "symbol",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-      accessibility: true,
-      locale: defaultLocale,
-      ...value,
-    };
-    // Override currency if arg is provided
-    if (arg) {
-      options.currency = arg;
-    }
-  } else {
-    // Value is the numeric value
-    numericValue = parseFloat(String(value));
-    options = {
-      currency: defaultCurrency,
-      currencyDisplay: "symbol",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-      accessibility: true,
-      locale: defaultLocale,
-    };
+  const defaultOptions: CurrencyOptions = {
+    currency: defaultCurrency,
+    currencyDisplay: "symbol",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    accessibility: true,
+    locale: defaultLocale,
+  };
+
+  // Parse the directive binding
+  const { mode, value, options } = parseDirectiveBinding(
+    binding,
+    defaultOptions,
+  );
+
+  // Override currency if arg is provided (for options mode)
+  if (mode === "options" && arg) {
+    options.currency = arg;
   }
 
-  // Parse the input value
-  if (isNaN(numericValue)) {
-    console.warn("Currency directive: Invalid numeric value:", value);
+  // Get the numeric value based on mode
+  let numericValue: number | null;
+  if (mode === "implicit" || mode === "options") {
+    const elementText = extractElementValue(el, "0");
+    numericValue = validateNumericValue(elementText, "Currency");
+  } else {
+    numericValue = validateNumericValue(value, "Currency");
+  }
+
+  if (numericValue === null) {
     return;
   }
 
@@ -73,22 +75,13 @@ function formatCurrency(el: HTMLElement, binding: DirectiveBinding) {
 
     const formatted = formatter.format(numericValue);
 
-    // Update element content
-    el.textContent = formatted;
-
-    // Add accessibility attributes if enabled
-    if (options.accessibility) {
-      el.setAttribute("aria-label", `Currency: ${formatted}`);
-      el.setAttribute("data-currency-value", numericValue.toString());
-      el.setAttribute("data-currency-code", options.currency);
-    }
-
-    // Add custom class if provided
-    if (options.class) {
-      el.classList.add(options.class);
-    }
+    // Apply common attributes and additional currency-specific attributes
+    applyCommonAttributes(el, options, formatted, "Currency", {
+      "data-currency-value": numericValue.toString(),
+      "data-currency-code": options.currency || "USD",
+    });
   } catch (error) {
-    console.error("Currency directive formatting error:", error);
+    handleDirectiveError("Currency", error, value);
   }
 }
 
