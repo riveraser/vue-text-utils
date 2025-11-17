@@ -48,11 +48,14 @@ function formatDateTime(el: HTMLElement, binding: DirectiveBinding) {
 
   // Get the date value based on mode
   let dateValue: Date | null;
+  let rawValue: string | number;
+
   if (mode === "implicit" || mode === "options") {
-    const elementText = extractElementValue(el, "");
-    dateValue = validateDateValue(elementText, "DateTime");
+    rawValue = extractElementValue(el, "");
+    dateValue = validateDateValue(rawValue, "DateTime");
   } else {
-    dateValue = validateDateValue(value, "DateTime");
+    rawValue = value as string | number;
+    dateValue = validateDateValue(rawValue, "DateTime");
   }
 
   if (dateValue === null) {
@@ -79,10 +82,17 @@ function formatDateTime(el: HTMLElement, binding: DirectiveBinding) {
     const formatted = formatter.format(dateValue);
 
     // Apply common attributes and additional datetime-specific attributes
-    applyCommonAttributes(el, options, formatted, "Date", {
-      "data-date-value": dateValue.toISOString(),
-      "data-timezone": options.timeZone || "UTC",
-    });
+    applyCommonAttributes(
+      el,
+      options,
+      formatted,
+      "Date",
+      {
+        "data-date-value": dateValue.toISOString(),
+        "data-timezone": options.timeZone || "UTC",
+      },
+      rawValue,
+    );
   } catch (error) {
     handleDirectiveError("DateTime", error, value);
   }

@@ -44,6 +44,38 @@ let globalOptions: VueTextUtilsOptions = {
 // Function to get global options (used by directives)
 export const getGlobalOptions = (): VueTextUtilsOptions => globalOptions;
 
+// Function to update global options at runtime
+export const updateGlobalOptions = (
+  newOptions: Partial<VueTextUtilsOptions>,
+): void => {
+  const previousOptions = { ...globalOptions };
+  globalOptions = { ...globalOptions, ...newOptions };
+
+  if (globalOptions.debug) {
+    console.log("VueTextUtils options updated:", {
+      previous: previousOptions,
+      new: globalOptions,
+      changes: newOptions,
+    });
+  }
+};
+
+// Function to reset global options to defaults
+export const resetGlobalOptions = (): void => {
+  const autoDetectedPrefs = detectUserPreferences();
+  globalOptions = {
+    locale: autoDetectedPrefs?.locale || "en-US",
+    defaultCurrency: autoDetectedPrefs?.currency || "USD",
+    defaultTimezone: autoDetectedPrefs?.timezone || "UTC",
+    autoDetect: true,
+    debug: false,
+  };
+
+  if (globalOptions.debug) {
+    console.log("VueTextUtils options reset to auto-detected:", globalOptions);
+  }
+};
+
 // Main plugin that registers all directives
 export const VueTextUtils = {
   install(app: App, options: VueTextUtilsOptions = {}) {
@@ -69,8 +101,17 @@ export const VueTextUtils = {
       }
     }
 
-    // Make global options available to the app
+    // Make global options and update functions available to the app
     app.provide("vueTextUtilsOptions", globalOptions);
+    app.provide("updateVueTextUtilsOptions", updateGlobalOptions);
+    app.provide("resetVueTextUtilsOptions", resetGlobalOptions);
+
+    // Add global properties for easy access in components
+    app.config.globalProperties.$vueTextUtils = {
+      getOptions: getGlobalOptions,
+      updateOptions: updateGlobalOptions,
+      resetOptions: resetGlobalOptions,
+    };
 
     // Register all format directives
     Object.entries(formatDirectives).forEach(([name, directive]) => {

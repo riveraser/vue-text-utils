@@ -44,11 +44,14 @@ function formatNumber(el: HTMLElement, binding: DirectiveBinding) {
 
   // Get the numeric value based on mode
   let numericValue: number | null;
+  let rawValue: string | number;
+
   if (mode === "implicit" || mode === "options") {
-    const elementText = extractElementValue(el, "0");
-    numericValue = validateNumericValue(elementText, "Number");
+    rawValue = extractElementValue(el, "0");
+    numericValue = validateNumericValue(rawValue, "Number");
   } else {
-    numericValue = validateNumericValue(value, "Number");
+    rawValue = value as string | number;
+    numericValue = validateNumericValue(rawValue, "Number");
   }
 
   if (numericValue === null) {
@@ -74,9 +77,16 @@ function formatNumber(el: HTMLElement, binding: DirectiveBinding) {
     }
 
     // Apply common attributes and additional number-specific attributes
-    applyCommonAttributes(el, options, formatted, "Number", {
-      "data-number-value": numericValue.toString(),
-    });
+    applyCommonAttributes(
+      el,
+      options,
+      formatted,
+      "Number",
+      {
+        "data-number-value": numericValue.toString(),
+      },
+      rawValue,
+    );
   } catch (error) {
     handleDirectiveError("Number", error, value);
   }

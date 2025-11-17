@@ -52,11 +52,14 @@ function formatCurrency(el: HTMLElement, binding: DirectiveBinding) {
 
   // Get the numeric value based on mode
   let numericValue: number | null;
+  let rawValue: string | number;
+
   if (mode === "implicit" || mode === "options") {
-    const elementText = extractElementValue(el, "0");
-    numericValue = validateNumericValue(elementText, "Currency");
+    rawValue = extractElementValue(el, "0");
+    numericValue = validateNumericValue(rawValue, "Currency");
   } else {
-    numericValue = validateNumericValue(value, "Currency");
+    rawValue = value as string | number;
+    numericValue = validateNumericValue(rawValue, "Currency");
   }
 
   if (numericValue === null) {
@@ -76,10 +79,17 @@ function formatCurrency(el: HTMLElement, binding: DirectiveBinding) {
     const formatted = formatter.format(numericValue);
 
     // Apply common attributes and additional currency-specific attributes
-    applyCommonAttributes(el, options, formatted, "Currency", {
-      "data-currency-value": numericValue.toString(),
-      "data-currency-code": options.currency || "USD",
-    });
+    applyCommonAttributes(
+      el,
+      options,
+      formatted,
+      "Currency",
+      {
+        "data-currency-value": numericValue.toString(),
+        "data-currency-code": options.currency || "USD",
+      },
+      rawValue,
+    );
   } catch (error) {
     handleDirectiveError("Currency", error, value);
   }

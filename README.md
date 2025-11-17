@@ -2,6 +2,10 @@
 
 A lightweight Vue 3 plugin offering a collection of custom directives for formatting text directly in your templates. Format currency, numbers, and date-time values with intuitive syntax like `v-format.currency`, `v-format.number`, and `v-format.date-time`. Designed for internationalization, accessibility, and rapid development.
 
+## 🎯 [Live Demo](https://riveraser.github.io/vue-text-utils/)
+
+Check out the interactive demo to see all features in action!
+
 ## Install Instructions:
 
 ```bash
@@ -99,57 +103,47 @@ app.mount("#app");
 ### Basic Usage:
 
 ```html
-<!-- Currency formatting (implicit - reads value from element content) -->
-<p v-currency>120</p>
+<!-- Currency formatting (explicit - uses binding value) -->
+<p v-currency="120"></p>
 <!-- Output: $120.00 -->
-<p v-currency:EUR>120</p>
+
+<p v-currency:EUR="120"></p>
 <!-- Output: €120.00 -->
 
-<!-- Currency formatting (explicit - uses binding value) -->
-<p v-currency="120">Price will be replaced</p>
-<p v-currency:EUR="120">Price will be replaced</p>
-
-<!-- Number formatting (implicit) -->
-<p v-number>1250</p>
+<!-- Number formatting (explicit) -->
+<p v-number="1250"></p>
 <!-- Output: 1,250 -->
 
-<!-- Number formatting (explicit) -->
-<p v-number="1250">Number will be replaced</p>
-
-<!-- Date-time formatting (implicit) -->
-<p v-date-time>2025-11-01T20:25:20.000Z</p>
-
 <!-- Date-time formatting (explicit) -->
-<p v-date-time="'2025-11-01T20:25:20.000Z'">Date will be replaced</p>
+<p v-date-time="'2025-11-01T20:25:20.000Z'"></p>
+<!-- Output: 11/1/2025, 8:25:20 PM -->
 ```
 
 ### Prefixed Usage (also available):
 
 ```html
-<!-- Implicit usage (reads from element content) -->
-<p v-format.currency>120</p>
-<p v-format.number>1250</p>
-<p v-format.date-time>2025-11-01T20:25:20.000Z</p>
-
 <!-- Explicit usage (uses binding value) -->
-<p v-format.currency="120">Content replaced</p>
-<p v-format.number="1250">Content replaced</p>
-<p v-format.date-time="'2025-11-01T20:25:20.000Z'">Content replaced</p>
+<p v-format.currency="120"></p>
+<p v-format.number="1250"></p>
+<p v-format.date-time="'2025-11-01T20:25:20.000Z'"></p>
 ```
 
 ### Advanced Usage with Options:
 
 ```html
 <!-- Currency with options -->
-<p v-currency="{ currency: 'USD', currencyDisplay: 'code' }">120</p>
+<p v-currency="{ value: 120, currency: 'USD', currencyDisplay: 'code' }"></p>
+<!-- Output: USD 120.00 -->
 
 <!-- Number as percentage -->
-<p v-number="{ percentage: true }">0.25</p>
+<p v-number="{ value: 0.25, percentage: true }"></p>
+<!-- Output: 25% -->
 
 <!-- Date with custom style -->
-<p v-date-time="{ dateStyle: 'short', timeStyle: 'short' }">
-  2025-11-01T20:25:20.000Z
-</p>
+<p
+  v-date-time="{ value: '2025-11-01T20:25:20.000Z', dateStyle: 'short', timeStyle: 'short' }"
+></p>
+<!-- Output: 11/1/25, 8:25 PM -->
 ```
 
 ## Real-World Example: Automatic Localization
@@ -160,20 +154,18 @@ app.mount("#app");
   <div class="product-card">
     <h3>{{ product.name }}</h3>
 
-    <!-- Price shows in user's currency automatically (implicit mode) -->
-    <p class="price" v-currency>{{ product.price }}</p>
+    <!-- Price shows in user's currency automatically -->
+    <p class="price" v-currency="product.price"></p>
 
-    <!-- Date shows in user's timezone automatically (implicit mode) -->
-    <p class="date" v-date-time>{{ product.createdAt }}</p>
+    <!-- Date shows in user's timezone automatically -->
+    <p class="date" v-date-time="product.createdAt"></p>
 
-    <!-- Numbers formatted according to user's locale (implicit mode) -->
-    <p class="views" v-number>{{ product.views }}</p>
+    <!-- Numbers formatted according to user's locale -->
+    <p class="views" v-number="product.views"></p>
   </div>
 </template>
 
 <script setup>
-import { VueTextUtils } from "@riveraser/vue-text-utils";
-
 // Auto-detection enabled by default - no configuration needed!
 // German user sees: 120,00 €, 1.234.567 views, 13.11.2025 format
 // US user sees: $120.00, 1,234,567 views, 11/13/2025 format
@@ -197,40 +189,49 @@ The directives use the following priority order for locale and formatting option
 3. **Global plugin options**
 4. **Built-in defaults** (lowest priority)
 
-### Implicit vs Explicit Mode:
+### Directive Modes:
 
-**Implicit Mode** (recommended for most cases):
+**Explicit Mode** (recommended - supports reactivity):
 
-- Use when the value to format is already in the element's content
-- Syntax: `<p v-currency>120</p>`
-- The directive reads the value from the element's text content
-- Cleaner, more intuitive syntax
+- Pass the value as a binding to the directive
+- Syntax: `<p v-currency="price"></p>`
+- The directive uses the binding value and updates when the value changes
+- **Fully reactive** - updates automatically when data changes
+- Best for dynamic values from component data
 
-**Explicit Mode**:
+**Explicit Mode with Options**:
 
-- Use when you need to pass the value as a binding
-- Syntax: `<p v-currency="120">Content gets replaced</p>`
-- The directive uses the binding value and replaces element content
-- Useful for dynamic values from component data
+- Pass both value and formatting options as an object
+- Syntax: `<p v-currency="{ value: price, currency: 'EUR' }"></p>`
+- Include a `value` property in the options object
+- **Fully reactive** - updates when `price` changes
 
-**Options Mode**:
+**Explicit Mode with Argument**:
 
-- Pass formatting options as an object
-- Works with both implicit and explicit modes
-- Implicit: `<p v-currency="{ currency: 'EUR' }">120</p>`
-- Explicit: `<p v-currency="{ value: 120, currency: 'EUR' }">Replaced</p>`
+- Use directive argument for common options like currency
+- Syntax: `<p v-currency:EUR="price"></p>`
+- Cleaner syntax for single option overrides
+- **Fully reactive**
 
 Example:
 
-```js
-// Global options set EUR as default
-app.use(VueTextUtils, { defaultCurrency: "EUR", locale: "de-DE" });
+```vue
+<script setup>
+import { ref } from "vue";
+const price = ref(100);
+const updatePrice = () => (price.value = 200);
+</script>
 
-// Implicit mode with directive option override (USD overrides global EUR)
-<p v-currency:USD>100</p>
+<template>
+  <!-- All of these are reactive and will update when price changes -->
+  <p v-currency="price"></p>
+  <p v-currency:EUR="price"></p>
+  <p
+    v-currency="{ value: price, currency: 'GBP', currencyDisplay: 'code' }"
+  ></p>
 
-// Explicit mode with global defaults (uses EUR from global options)
-<p v-currency="100">Content replaced with formatted value</p>
+  <button @click="updatePrice">Update Price</button>
+</template>
 ```
 
 ## Global Options:
